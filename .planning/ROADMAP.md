@@ -73,7 +73,10 @@ Plans:
   1. `docker compose up` starts the service; logs show devices being polled and data written to InfluxDB — no Python import errors or missing dependency errors
   2. `docker stop` triggers a clean shutdown — logs show graceful task cancellation and `writer.close()` called; container exits within 5 seconds (no SIGKILL)
   3. The container reaches inverter IPs on the LAN (requires `network_mode: host`); setting `CONFIG_PATH=/data/my-config.yaml` via environment variable loads that file instead of the default
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 04-01-PLAN.md — Dockerfile, docker-compose.yml, CONFIG_PATH env var, SIGTERM shutdown, example config
 
 ---
 

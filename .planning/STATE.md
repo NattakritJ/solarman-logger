@@ -3,12 +3,12 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-29T15:22:00Z"
+last_updated: "2026-03-29T15:29:33.401Z"
 progress:
   total_phases: 4
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -41,7 +41,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 ## Active Phase
 
-Phase 01 — protocol-core (Plan 01 complete, Plan 02 next)
+Phase 01 — protocol-core (Plan 02 complete, Plan 03 next)
 
 ---
 
@@ -50,10 +50,11 @@ Phase 01 — protocol-core (Plan 01 complete, Plan 02 next)
 | Plan | Duration | Tasks | Files | Completed |
 |------|----------|-------|-------|-----------|
 | 01-01 | 362s | 2 | 8 created | 2026-03-29 |
+| 01-02 | 153s | 2 | 4 created | 2026-03-29 |
 
-- Plans completed: 1
+- Plans completed: 2
 - Phases completed: 0/4
-- Requirements delivered: 3/20 (POLL-02, POLL-03, POLL-05)
+- Requirements delivered: 7/20 (POLL-02, POLL-03, POLL-05, CONF-01, CONF-02, CONF-03, CONF-04)
 
 ---
 
@@ -64,6 +65,9 @@ Phase 01 — protocol-core (Plan 01 complete, Plan 02 next)
 1. **[01-01]** pysolarman/__init__.py copied verbatim — relative import `from ..common import ...` already resolves to `solarman_logger.common`
 2. **[01-01]** python-slugify replaces `homeassistant.util.slugify` — identical behavior, no HA dependency
 3. **[01-01]** `entity_key()` kept in common.py — required by `preprocess_descriptions()` used in parser.py
+4. **[01-02]** Used yaml.safe_load (sync) for config loading — config is read once at startup, sync is simpler and sufficient
+5. **[01-02]** ConfigError message format `"Missing required config: {field_path}"` — names exact field for fast debuggability
+6. **[01-02]** profile_dir ends with "/" — matches ParameterParser.init(path, filename) calling convention
 
 ### Todos
 
@@ -80,6 +84,7 @@ Phase 01 — protocol-core (Plan 01 complete, Plan 02 next)
 | Date | Plan | Action |
 |------|------|--------|
 | 2026-03-29 | 01-01 | Completed: solarman_logger/ package scaffold + protocol extraction (2 tasks, 8 files, 5 tests GREEN) |
+| 2026-03-29 | 01-02 | Completed: YAML config loader with startup validation — load_config(), Config, DeviceConfig, InfluxConfig, ConfigError (2 tasks, 4 files, 7 tests GREEN) |
 
 ---
 *State initialized: 2026-03-29*

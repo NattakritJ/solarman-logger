@@ -7,10 +7,10 @@
 
 ### Configuration
 
-- [ ] **CONF-01**: User can define N devices in a YAML file (host, port, serial, name, type, profile path)
-- [ ] **CONF-02**: User can configure a global poll interval and optionally override it per device
-- [ ] **CONF-03**: User can configure InfluxDB v2 connection (URL, org, bucket, token) in the same YAML file
-- [ ] **CONF-04**: Service fails fast with a clear error message on invalid or missing config at startup
+- [x] **CONF-01**: User can define N devices in a YAML file (host, port, serial, name, type, profile path)
+- [x] **CONF-02**: User can configure a global poll interval and optionally override it per device
+- [x] **CONF-03**: User can configure InfluxDB v2 connection (URL, org, bucket, token) in the same YAML file
+- [x] **CONF-04**: Service fails fast with a clear error message on invalid or missing config at startup
 
 ### Device Polling
 
@@ -79,10 +79,10 @@ Updated: 2026-03-29 (roadmap created)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONF-01 | Phase 1 | Pending |
-| CONF-02 | Phase 1 | Pending |
-| CONF-03 | Phase 1 | Pending |
-| CONF-04 | Phase 1 | Pending |
+| CONF-01 | Phase 1 | Complete |
+| CONF-02 | Phase 1 | Complete |
+| CONF-03 | Phase 1 | Complete |
+| CONF-04 | Phase 1 | Complete |
 | POLL-01 | Phase 2 | Pending |
 | POLL-02 | Phase 1 | Complete |
 | POLL-03 | Phase 1 | Complete |

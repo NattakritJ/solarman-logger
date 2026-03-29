@@ -17,16 +17,17 @@ Every configured device is polled on schedule and its data lands in InfluxDB —
 - ✓ ParameterParser — parses raw register values into named, typed fields — existing in repo
 - ✓ Async TCP polling loop (DataUpdateCoordinator pattern) — existing in repo
 - ✓ Per-device config entry model (host, port, serial, profile) — existing in repo
+- ✓ YAML configuration file with startup validation and typed DeviceConfig objects — Validated in Phase 1: Protocol Core
+- ✓ Configurable poll interval per device (or global default) — Validated in Phase 1: Protocol Core
+- ✓ Reuse ha-solarman's YAML device profile definitions for register mapping — Validated in Phase 1: Protocol Core
+- ✓ Structured stdout logging (timestamps, device name, log level) — Validated in Phase 1: Protocol Core
 
 ### Active
 
-- [ ] YAML configuration file — define N devices (host, port, serial, name, type, profile) + InfluxDB connection
-- [ ] Configurable poll interval per device (or global default)
-- [ ] Reuse ha-solarman's YAML device profile definitions for register mapping
 - [ ] Write measurements to InfluxDB v2 — one measurement per device, tagged with device name + type
 - [ ] Docker image + docker-compose.yml for deployment
 - [ ] Graceful error handling — log and retry on device unreachable or bad data, never crash
-- [ ] Structured stdout logging (timestamps, device name, log level)
+- [ ] Concurrent per-device polling loop with error isolation
 
 ### Out of Scope
 
@@ -75,12 +76,13 @@ Every configured device is polled on schedule and its data lands in InfluxDB —
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Reuse pysolarman + umodbus from repo | Already proven, handles Solarman V5 framing correctly | — Pending |
-| Reuse ParameterParser + YAML profiles | Eliminates register mapping work; profiles already exist for Deye | — Pending |
+| Reuse pysolarman + umodbus from repo | Already proven, handles Solarman V5 framing correctly | ✓ Extracted in Phase 1 — zero HA imports |
+| Reuse ParameterParser + YAML profiles | Eliminates register mapping work; profiles already exist for Deye | ✓ Extracted in Phase 1 — 60-item profile loads and parses |
 | Per-device measurements in InfluxDB | Cleanest Grafana dashboard structure; easy to query per device | — Pending |
-| YAML config file | Human-readable, easy to add/remove devices without code changes | — Pending |
+| YAML config file | Human-readable, easy to add/remove devices without code changes | ✓ Implemented in Phase 1 — fail-fast validation |
 | Docker + docker-compose.yml | Matches user's existing server setup; portable, restartable | — Pending |
 | Log-and-retry on failure | Never crash; one broken device shouldn't stop others | — Pending |
+| python-slugify replaces HA slugify | Validated equivalent output across all profile keys | ✓ Confirmed in Phase 1 |
 
 ## Evolution
 
@@ -100,4 +102,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after initialization*
+*Last updated: 2026-03-29 after Phase 1 (Protocol Core) completion*

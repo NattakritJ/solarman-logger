@@ -5,11 +5,14 @@ Raises ConfigError immediately on any missing or invalid required field.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 import yaml
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class ConfigError(Exception):
@@ -53,6 +56,52 @@ def _require(data: dict[str, Any], key: str, context: str = "") -> Any:
     if isinstance(value, str) and not value.strip():
         raise ConfigError(f"Missing required config: {field_path}")
     return value
+
+
+# Maximum value that fits in a 32-bit unsigned integer (Solarman V5 frame field width).
+_SERIAL_MAX_32BIT = 0xFFFFFFFF
+
+
+def _parse_serial(value: Any, context: str) -> int:
+    """Parse a serial number from a config value (int or str).
+
+    Accepts:
+      - An int already parsed by YAML (e.g. ``serial: 1234567890``)
+      - A decimal string (e.g. ``"1234567890"``)
+      - A hex string with or without ``0x`` prefix (e.g. ``"251017036F"`` or ``"0x251017036F"``)
+
+    Raises ConfigError when the value cannot be interpreted as an integer.
+    Logs a warning when the parsed value exceeds 32 bits (the Solarman V5
+    protocol will fall back to auto-discovery in that case).
+    """
+    if isinstance(value, int):
+        serial = value
+    else:
+        text = str(value).strip()
+        try:
+            # Try decimal first — the common case.
+            serial = int(text)
+        except ValueError:
+            try:
+                # Fall back to hexadecimal (with or without 0x prefix).
+                serial = int(text, 16)
+            except ValueError:
+                raise ConfigError(
+                    f"Config error: {context} must be a numeric value "
+                    f"(decimal or hex), got {value!r}"
+                )
+
+    if serial < 0:
+        raise ConfigError(f"Config error: {context} must be a non-negative integer")
+
+    if serial > _SERIAL_MAX_32BIT:
+        _LOGGER.warning(
+            "%s value %s (%d) exceeds 32-bit range; "
+            "the Solarman V5 protocol will auto-discover the serial from the device",
+            context, value, serial,
+        )
+
+    return serial
 
 
 def load_config(path: str) -> Config:
@@ -137,7 +186,7 @@ def load_config(path: str) -> Config:
             type=str(dev_type),
             host=str(dev_host),
             port=int(dev_port),
-            serial=int(dev_serial),
+            serial=_parse_serial(dev_serial, f"devices[{i}].serial"),
             slave=int(dev_slave),
             poll_interval=int(dev_poll),
             profile_dir=config_dir,

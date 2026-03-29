@@ -63,7 +63,7 @@ Plans:
 
 Plans:
 - [x] 03-01-PLAN.md — InfluxDB writer module, DeviceConfig type field, health check, float enforcement, write error handling
-- [ ] 03-02-PLAN.md — main.py entry point, wire writer into poller shutdown, full integration
+- [x] 03-02-PLAN.md — main.py entry point, wire writer into poller shutdown, full integration
 
 ### Phase 4: Docker Packaging
 **Goal**: The complete service runs as a Docker container started with `docker compose up`; it reaches LAN inverters, loads config from a bind-mounted file, and exits cleanly on `docker stop`.

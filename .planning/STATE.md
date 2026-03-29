@@ -3,19 +3,19 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-last_updated: "2026-03-29T19:37:33.000Z"
+last_updated: "2026-03-29T19:46:23.000Z"
 progress:
   total_phases: 4
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
 
 **Project:** solarman-logger
 **Initialized:** 2026-03-29
-**Status:** Executing Phase 03
+**Status:** Phase 03 Complete
 
 ---
 
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 **Core value:** Every configured device is polled on schedule and its data lands in InfluxDB — reliably, without crashing, continuously.
-**Current focus:** Phase 03 — influxdb-pipeline
+**Current focus:** Phase 04 — docker-packaging
 
 ---
 
@@ -34,14 +34,14 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 |---|-------|-------------|--------|
 | 1 | Protocol Core | CONF-01–04, POLL-02, POLL-03, POLL-05, LOG-01, LOG-02 | Complete |
 | 2 | Device Polling Loop | POLL-01, POLL-04, POLL-06 | Complete |
-| 3 | InfluxDB Pipeline | INFL-01–05 | Executing (1/2 plans) |
+| 3 | InfluxDB Pipeline | INFL-01–05 | Complete |
 | 4 | Docker Packaging | DEPL-01–03 | Pending |
 
 ---
 
 ## Active Phase
 
-Phase 03 — influxdb-pipeline
+Phase 04 — docker-packaging
 
 ---
 
@@ -55,9 +55,10 @@ Phase 03 — influxdb-pipeline
 | 02-01 | — | 2 | 2 changed/created | 2026-03-30 |
 | 02-02 | — | 2 | 2 created | 2026-03-30 |
 | 03-01 | 260s | 2 | 6 created/modified | 2026-03-30 |
+| 03-02 | 185s | 2 | 6 created/modified | 2026-03-30 |
 
-- Plans completed: 6
-- Phases completed: 2/4
+- Plans completed: 7
+- Phases completed: 3/4
 - Requirements delivered: 18/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02, INFL-01, INFL-02, INFL-03, INFL-04, INFL-05)
 
 ---
@@ -78,6 +79,8 @@ Phase 03 — influxdb-pipeline
 10. **[03-01]** Used SYNCHRONOUS write mode (no batching) — data is dropped on failure per D-10, batching adds complexity with no benefit
 11. **[03-01]** check_health wraps ping in try/except and raises RuntimeError with URL for clear fail-fast diagnostics
 12. **[03-01]** make_data_callback takes dict[str, str] device_configs mapping name→type for O(1) lookup
+13. **[03-02]** on_shutdown callback parameter keeps poller.py decoupled from writer.py — no direct import dependency
+14. **[03-02]** writer.close() made idempotent (self._client=None check) for safe double-close from poller and main
 
 ### Todos
 
@@ -99,6 +102,7 @@ Phase 03 — influxdb-pipeline
 | 2026-03-30 | 02-01 | Completed: pysolarman reconnect fixes — bounded retry, asyncio.Event, no last-frame replay (4 regression tests GREEN) |
 | 2026-03-30 | 02-02 | Completed: standalone poller — DeviceWorker, DeviceHealth, elapsed-time scheduling, per-device backoff (45 tests GREEN) |
 | 2026-03-30 | 03-01 | Completed: InfluxDBWriter with float-typed Points, device_name/device_type tags, ping health check, error-swallowing writes (18 tests GREEN) |
+| 2026-03-30 | 03-02 | Completed: main.py entry point + writer wiring — config→health check→polling, on_shutdown callback, idempotent close (64 tests GREEN) |
 
 ---
 *State initialized: 2026-03-29*

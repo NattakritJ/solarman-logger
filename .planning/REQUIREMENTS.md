@@ -36,9 +36,9 @@
 
 ### Deployment
 
-- [ ] **DEPL-01**: Service ships as a Docker image built from a `Dockerfile` using `python:3.12-slim`
-- [ ] **DEPL-02**: A `docker-compose.yml` is provided with `network_mode: host` and config file bind-mount
-- [ ] **DEPL-03**: Config file path is configurable via an environment variable (default: `/config/config.yaml`)
+- [x] **DEPL-01**: Service ships as a Docker image built from a `Dockerfile` using `python:3.12-slim`
+- [x] **DEPL-02**: A `docker-compose.yml` is provided with `network_mode: host` and config file bind-mount
+- [x] **DEPL-03**: Config file path is configurable via an environment variable (default: `/config/config.yaml`)
 
 ## v2 Requirements
 
@@ -96,9 +96,9 @@ Updated: 2026-03-29 (roadmap created)
 | INFL-05 | Phase 3 | Complete |
 | LOG-01 | Phase 1 | Pending |
 | LOG-02 | Phase 1 | Pending |
-| DEPL-01 | Phase 4 | Pending |
-| DEPL-02 | Phase 4 | Pending |
-| DEPL-03 | Phase 4 | Pending |
+| DEPL-01 | Phase 4 | Complete |
+| DEPL-02 | Phase 4 | Complete |
+| DEPL-03 | Phase 4 | Complete |
 
 **Coverage:**
 - v1 requirements: 20 total

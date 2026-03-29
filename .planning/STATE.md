@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-03-29T19:53:58.972Z"
+status: complete
+last_updated: "2026-03-29T20:14:22.000Z"
 progress:
   total_phases: 4
-  completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  completed_phases: 4
+  total_plans: 8
+  completed_plans: 8
 ---
 
 # Project State
 
 **Project:** solarman-logger
 **Initialized:** 2026-03-29
-**Status:** Ready to plan
+**Status:** All Phases Complete
 
 ---
 
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 **Core value:** Every configured device is polled on schedule and its data lands in InfluxDB — reliably, without crashing, continuously.
-**Current focus:** Phase 04 — docker-packaging
+**Current focus:** All phases complete — solarman-logger ready for deployment
 
 ---
 
@@ -35,13 +35,13 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 | 1 | Protocol Core | CONF-01–04, POLL-02, POLL-03, POLL-05, LOG-01, LOG-02 | Complete |
 | 2 | Device Polling Loop | POLL-01, POLL-04, POLL-06 | Complete |
 | 3 | InfluxDB Pipeline | INFL-01–05 | Complete |
-| 4 | Docker Packaging | DEPL-01–03 | Pending |
+| 4 | Docker Packaging | DEPL-01–03 | Complete |
 
 ---
 
 ## Active Phase
 
-Phase 04 — docker-packaging
+All phases complete.
 
 ---
 
@@ -56,10 +56,11 @@ Phase 04 — docker-packaging
 | 02-02 | — | 2 | 2 created | 2026-03-30 |
 | 03-01 | 260s | 2 | 6 created/modified | 2026-03-30 |
 | 03-02 | 185s | 2 | 6 created/modified | 2026-03-30 |
+| 04-01 | 208s | 2 | 6 created/modified | 2026-03-30 |
 
-- Plans completed: 7
-- Phases completed: 3/4
-- Requirements delivered: 18/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02, INFL-01, INFL-02, INFL-03, INFL-04, INFL-05)
+- Plans completed: 8
+- Phases completed: 4/4
+- Requirements delivered: 20/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02, INFL-01, INFL-02, INFL-03, INFL-04, INFL-05, DEPL-01, DEPL-02, DEPL-03)
 
 ---
 
@@ -81,6 +82,10 @@ Phase 04 — docker-packaging
 12. **[03-01]** make_data_callback takes dict[str, str] device_configs mapping name→type for O(1) lookup
 13. **[03-02]** on_shutdown callback parameter keeps poller.py decoupled from writer.py — no direct import dependency
 14. **[03-02]** writer.close() made idempotent (self._client=None check) for safe double-close from poller and main
+15. **[04-01]** CONFIG_PATH env var checked only when --config is at default — explicit CLI always wins
+16. **[04-01]** SIGTERM converted to SystemExit(0) — reuses existing finally-block cleanup
+17. **[04-01]** Config directory bind-mounted at /config — user provides config.yaml and inverter_definitions/
+18. **[04-01]** No inverter_definitions in image — mounted from host for user customization
 
 ### Todos
 
@@ -103,6 +108,7 @@ Phase 04 — docker-packaging
 | 2026-03-30 | 02-02 | Completed: standalone poller — DeviceWorker, DeviceHealth, elapsed-time scheduling, per-device backoff (45 tests GREEN) |
 | 2026-03-30 | 03-01 | Completed: InfluxDBWriter with float-typed Points, device_name/device_type tags, ping health check, error-swallowing writes (18 tests GREEN) |
 | 2026-03-30 | 03-02 | Completed: main.py entry point + writer wiring — config→health check→polling, on_shutdown callback, idempotent close (64 tests GREEN) |
+| 2026-03-30 | 04-01 | Completed: Docker packaging — Dockerfile (python:3.12-slim), docker-compose.yml (host networking), CONFIG_PATH env var, SIGTERM clean shutdown (69 tests GREEN) |
 
 ---
 *State initialized: 2026-03-29*

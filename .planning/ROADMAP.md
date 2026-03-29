@@ -76,7 +76,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01-PLAN.md — Dockerfile, docker-compose.yml, CONFIG_PATH env var, SIGTERM shutdown, example config
+- [x] 04-01-PLAN.md — Dockerfile, docker-compose.yml, CONFIG_PATH env var, SIGTERM shutdown, example config
 
 ---
 

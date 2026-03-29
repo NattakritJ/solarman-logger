@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: in_progress
-last_updated: "2026-03-30T00:00:00.000Z"
+status: executing
+last_updated: "2026-03-29T19:37:33.000Z"
 progress:
   total_phases: 4
   completed_phases: 2
-  total_plans: 5
-  completed_plans: 5
+  total_plans: 7
+  completed_plans: 6
 ---
 
 # Project State
 
 **Project:** solarman-logger
 **Initialized:** 2026-03-29
-**Status:** Phase 2 complete
+**Status:** Executing Phase 03
 
 ---
 
@@ -34,7 +34,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 |---|-------|-------------|--------|
 | 1 | Protocol Core | CONF-01–04, POLL-02, POLL-03, POLL-05, LOG-01, LOG-02 | Complete |
 | 2 | Device Polling Loop | POLL-01, POLL-04, POLL-06 | Complete |
-| 3 | InfluxDB Pipeline | INFL-01–05 | Pending |
+| 3 | InfluxDB Pipeline | INFL-01–05 | Executing (1/2 plans) |
 | 4 | Docker Packaging | DEPL-01–03 | Pending |
 
 ---
@@ -54,10 +54,11 @@ Phase 03 — influxdb-pipeline
 | 01-03 | 199s | 2 | 5 created | 2026-03-29 |
 | 02-01 | — | 2 | 2 changed/created | 2026-03-30 |
 | 02-02 | — | 2 | 2 created | 2026-03-30 |
+| 03-01 | 260s | 2 | 6 created/modified | 2026-03-30 |
 
-- Plans completed: 5
+- Plans completed: 6
 - Phases completed: 2/4
-- Requirements delivered: 13/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02)
+- Requirements delivered: 18/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02, INFL-01, INFL-02, INFL-03, INFL-04, INFL-05)
 
 ---
 
@@ -74,6 +75,9 @@ Phase 03 — influxdb-pipeline
 7. **[02-01]** pysolarman reconnect is bounded to 3 attempts and no longer replays the last frame after reconnect
 8. **[02-02]** poll scheduling uses elapsed wall-clock ticks rounded to `poll_interval`, not successful-poll counters
 9. **[02-02]** solar/offline quiet logging is inferred from profile metadata and PV-style item names, not new config fields
+10. **[03-01]** Used SYNCHRONOUS write mode (no batching) — data is dropped on failure per D-10, batching adds complexity with no benefit
+11. **[03-01]** check_health wraps ping in try/except and raises RuntimeError with URL for clear fail-fast diagnostics
+12. **[03-01]** make_data_callback takes dict[str, str] device_configs mapping name→type for O(1) lookup
 
 ### Todos
 
@@ -94,6 +98,7 @@ Phase 03 — influxdb-pipeline
 | 2026-03-29 | 01-03 | Completed: parser integration tests, structured logging, slugify verification, requirements.txt (2 tasks, 5 files, 29 tests GREEN) |
 | 2026-03-30 | 02-01 | Completed: pysolarman reconnect fixes — bounded retry, asyncio.Event, no last-frame replay (4 regression tests GREEN) |
 | 2026-03-30 | 02-02 | Completed: standalone poller — DeviceWorker, DeviceHealth, elapsed-time scheduling, per-device backoff (45 tests GREEN) |
+| 2026-03-30 | 03-01 | Completed: InfluxDBWriter with float-typed Points, device_name/device_type tags, ping health check, error-swallowing writes (18 tests GREEN) |
 
 ---
 *State initialized: 2026-03-29*

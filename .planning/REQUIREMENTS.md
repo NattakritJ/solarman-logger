@@ -14,20 +14,20 @@
 
 ### Device Polling
 
-- [ ] **POLL-01**: Service polls all configured devices concurrently; one device failing does not affect others
+- [x] **POLL-01**: Service polls all configured devices concurrently; one device failing does not affect others
 - [x] **POLL-02**: Service reuses ha-solarman's YAML inverter definition profiles for register mapping
 - [x] **POLL-03**: Service parses raw Modbus register values into named, typed, unit-annotated fields using ParameterParser
-- [ ] **POLL-04**: Service honours per-group `update_interval` from YAML profiles (e.g., Info group at 3600s, real-time at 5s)
+- [x] **POLL-04**: Service honours per-group `update_interval` from YAML profiles (e.g., Info group at 3600s, real-time at 5s)
 - [x] **POLL-05**: Service applies YAML profile register validation (min/max/invalidate_all) to filter bad readings before writing
-- [ ] **POLL-06**: On TCP failure, service logs the error and retries on the next poll cycle without crashing
+- [x] **POLL-06**: On TCP failure, service logs the error and retries on the next poll cycle without crashing
 
 ### InfluxDB Writing
 
-- [ ] **INFL-01**: Service writes one InfluxDB Point per device per poll cycle containing all parsed fields
-- [ ] **INFL-02**: Each Point is tagged with device name and device type
-- [ ] **INFL-03**: All numeric field values are written as float (never int) to prevent permanent InfluxDB type conflicts
-- [ ] **INFL-04**: Service validates InfluxDB connectivity at startup and logs a clear error if unreachable
-- [ ] **INFL-05**: On InfluxDB write failure, service logs the error and continues polling (data for that cycle is dropped, not buffered)
+- [x] **INFL-01**: Service writes one InfluxDB Point per device per poll cycle containing all parsed fields
+- [x] **INFL-02**: Each Point is tagged with device name and device type
+- [x] **INFL-03**: All numeric field values are written as float (never int) to prevent permanent InfluxDB type conflicts
+- [x] **INFL-04**: Service validates InfluxDB connectivity at startup and logs a clear error if unreachable
+- [x] **INFL-05**: On InfluxDB write failure, service logs the error and continues polling (data for that cycle is dropped, not buffered)
 
 ### Logging
 
@@ -83,17 +83,17 @@ Updated: 2026-03-29 (roadmap created)
 | CONF-02 | Phase 1 | Complete |
 | CONF-03 | Phase 1 | Complete |
 | CONF-04 | Phase 1 | Complete |
-| POLL-01 | Phase 2 | Pending |
+| POLL-01 | Phase 2 | Complete |
 | POLL-02 | Phase 1 | Complete |
 | POLL-03 | Phase 1 | Complete |
-| POLL-04 | Phase 2 | Pending |
+| POLL-04 | Phase 2 | Complete |
 | POLL-05 | Phase 1 | Complete |
-| POLL-06 | Phase 2 | Pending |
-| INFL-01 | Phase 3 | Pending |
-| INFL-02 | Phase 3 | Pending |
-| INFL-03 | Phase 3 | Pending |
-| INFL-04 | Phase 3 | Pending |
-| INFL-05 | Phase 3 | Pending |
+| POLL-06 | Phase 2 | Complete |
+| INFL-01 | Phase 3 | Complete |
+| INFL-02 | Phase 3 | Complete |
+| INFL-03 | Phase 3 | Complete |
+| INFL-04 | Phase 3 | Complete |
+| INFL-05 | Phase 3 | Complete |
 | LOG-01 | Phase 1 | Pending |
 | LOG-02 | Phase 1 | Pending |
 | DEPL-01 | Phase 4 | Pending |

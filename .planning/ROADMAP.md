@@ -62,7 +62,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01-PLAN.md — InfluxDB writer module, DeviceConfig type field, health check, float enforcement, write error handling
+- [x] 03-01-PLAN.md — InfluxDB writer module, DeviceConfig type field, health check, float enforcement, write error handling
 - [ ] 03-02-PLAN.md — main.py entry point, wire writer into poller shutdown, full integration
 
 ### Phase 4: Docker Packaging

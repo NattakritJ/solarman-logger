@@ -86,7 +86,16 @@ class InfluxDBWriter:
         return _callback
 
     def close(self) -> None:
-        """Flush and close the InfluxDB client (per D-11)."""
-        self._write_api.close()
-        self._client.close()
+        """Flush and close the InfluxDB client (per D-11). Idempotent."""
+        if self._client is None:
+            return
+        try:
+            self._write_api.close()
+        except Exception:
+            pass
+        try:
+            self._client.close()
+        except Exception:
+            pass
+        self._client = None
         _LOGGER.debug("InfluxDB writer closed")

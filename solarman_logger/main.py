@@ -56,7 +56,7 @@ def main(argv: list[str] | None = None) -> None:
 
     # Run polling loop with writer wired in
     try:
-        asyncio.run(run_all(config, data_callback))
+        asyncio.run(run_all(config, data_callback, on_shutdown=writer.close))
     except KeyboardInterrupt:
         _LOGGER.info("Shutting down (keyboard interrupt)")
     finally:

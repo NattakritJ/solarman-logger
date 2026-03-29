@@ -1,0 +1,36 @@
+# solarman-logger configuration
+# Copy this file to config/config.yaml and update values for your setup.
+#
+# Directory layout expected by Docker:
+#   config/
+#     config.yaml                  (this file)
+#     inverter_definitions/        (copy from repo: custom_components/solarman/inverter_definitions/)
+#       deye_micro.yaml
+#       ...
+
+influxdb:
+  url: "http://localhost:8086"
+  org: "my-org"
+  bucket: "solar"
+  token: "my-influxdb-token"
+
+defaults:
+  poll_interval: 30   # seconds — global default, can be overridden per device
+
+devices:
+  - name: "Inverter 1"
+    type: "inverter"
+    host: "192.168.1.100"
+    port: 8899
+    serial: 1234567890
+    slave: 1
+    profile: "deye_micro.yaml"
+
+  - name: "Smart Meter"
+    type: "meter"
+    host: "192.168.1.101"
+    port: 8899
+    serial: 9876543210
+    slave: 1
+    poll_interval: 60    # override: poll meter every 60s
+    profile: "ddzy_meter.yaml"

@@ -1,0 +1,11 @@
+services:
+  solarman-logger:
+    build: .
+    container_name: solarman-logger
+    network_mode: host
+    restart: unless-stopped
+    stop_grace_period: 5s
+    environment:
+      - CONFIG_PATH=/config/config.yaml
+    volumes:
+      - ./config:/config:ro

@@ -15,10 +15,10 @@
 ### Device Polling
 
 - [ ] **POLL-01**: Service polls all configured devices concurrently; one device failing does not affect others
-- [ ] **POLL-02**: Service reuses ha-solarman's YAML inverter definition profiles for register mapping
-- [ ] **POLL-03**: Service parses raw Modbus register values into named, typed, unit-annotated fields using ParameterParser
+- [x] **POLL-02**: Service reuses ha-solarman's YAML inverter definition profiles for register mapping
+- [x] **POLL-03**: Service parses raw Modbus register values into named, typed, unit-annotated fields using ParameterParser
 - [ ] **POLL-04**: Service honours per-group `update_interval` from YAML profiles (e.g., Info group at 3600s, real-time at 5s)
-- [ ] **POLL-05**: Service applies YAML profile register validation (min/max/invalidate_all) to filter bad readings before writing
+- [x] **POLL-05**: Service applies YAML profile register validation (min/max/invalidate_all) to filter bad readings before writing
 - [ ] **POLL-06**: On TCP failure, service logs the error and retries on the next poll cycle without crashing
 
 ### InfluxDB Writing
@@ -84,10 +84,10 @@ Updated: 2026-03-29 (roadmap created)
 | CONF-03 | Phase 1 | Pending |
 | CONF-04 | Phase 1 | Pending |
 | POLL-01 | Phase 2 | Pending |
-| POLL-02 | Phase 1 | Pending |
-| POLL-03 | Phase 1 | Pending |
+| POLL-02 | Phase 1 | Complete |
+| POLL-03 | Phase 1 | Complete |
 | POLL-04 | Phase 2 | Pending |
-| POLL-05 | Phase 1 | Pending |
+| POLL-05 | Phase 1 | Complete |
 | POLL-06 | Phase 2 | Pending |
 | INFL-01 | Phase 3 | Pending |
 | INFL-02 | Phase 3 | Pending |

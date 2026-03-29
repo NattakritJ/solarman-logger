@@ -134,7 +134,7 @@ def test_make_data_callback_calls_write_callback(influx_config, mock_client):
     callback = writer.make_data_callback(device_configs)
 
     parsed = {"voltage": (236.9, None)}
-    asyncio.get_event_loop().run_until_complete(callback("smart-meter", parsed))
+    asyncio.run(callback("smart-meter", parsed))
 
     mock_client["write_api"].write.assert_called_once()
     record = mock_client["write_api"].write.call_args[1]["record"]

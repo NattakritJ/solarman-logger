@@ -2,20 +2,20 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-last_updated: "2026-03-29T16:38:12.459Z"
+status: in_progress
+last_updated: "2026-03-30T00:00:00.000Z"
 progress:
   total_phases: 4
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
+  completed_phases: 2
+  total_plans: 5
+  completed_plans: 5
 ---
 
 # Project State
 
 **Project:** solarman-logger
 **Initialized:** 2026-03-29
-**Status:** Ready to plan
+**Status:** Phase 2 complete
 
 ---
 
@@ -24,7 +24,7 @@ progress:
 See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 **Core value:** Every configured device is polled on schedule and its data lands in InfluxDB — reliably, without crashing, continuously.
-**Current focus:** Phase 01 — protocol-core
+**Current focus:** Phase 03 — influxdb-pipeline
 
 ---
 
@@ -32,8 +32,8 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 | # | Phase | Requirements | Status |
 |---|-------|-------------|--------|
-| 1 | Protocol Core | CONF-01–04, POLL-02, POLL-03, POLL-05, LOG-01, LOG-02 | Pending |
-| 2 | Device Polling Loop | POLL-01, POLL-04, POLL-06 | Pending |
+| 1 | Protocol Core | CONF-01–04, POLL-02, POLL-03, POLL-05, LOG-01, LOG-02 | Complete |
+| 2 | Device Polling Loop | POLL-01, POLL-04, POLL-06 | Complete |
 | 3 | InfluxDB Pipeline | INFL-01–05 | Pending |
 | 4 | Docker Packaging | DEPL-01–03 | Pending |
 
@@ -41,7 +41,7 @@ See: `.planning/PROJECT.md` (updated 2026-03-29)
 
 ## Active Phase
 
-Phase 01 — protocol-core (Plan 02 complete, Plan 03 next)
+Phase 03 — influxdb-pipeline
 
 ---
 
@@ -51,10 +51,13 @@ Phase 01 — protocol-core (Plan 02 complete, Plan 03 next)
 |------|----------|-------|-------|-----------|
 | 01-01 | 362s | 2 | 8 created | 2026-03-29 |
 | 01-02 | 153s | 2 | 4 created | 2026-03-29 |
+| 01-03 | 199s | 2 | 5 created | 2026-03-29 |
+| 02-01 | — | 2 | 2 changed/created | 2026-03-30 |
+| 02-02 | — | 2 | 2 created | 2026-03-30 |
 
-- Plans completed: 2
-- Phases completed: 0/4
-- Requirements delivered: 7/20 (POLL-02, POLL-03, POLL-05, CONF-01, CONF-02, CONF-03, CONF-04)
+- Plans completed: 5
+- Phases completed: 2/4
+- Requirements delivered: 13/20 (CONF-01, CONF-02, CONF-03, CONF-04, POLL-01, POLL-02, POLL-03, POLL-04, POLL-05, POLL-06, LOG-01, LOG-02)
 
 ---
 
@@ -68,6 +71,9 @@ Phase 01 — protocol-core (Plan 02 complete, Plan 03 next)
 4. **[01-02]** Used yaml.safe_load (sync) for config loading — config is read once at startup, sync is simpler and sufficient
 5. **[01-02]** ConfigError message format `"Missing required config: {field_path}"` — names exact field for fast debuggability
 6. **[01-02]** profile_dir ends with "/" — matches ParameterParser.init(path, filename) calling convention
+7. **[02-01]** pysolarman reconnect is bounded to 3 attempts and no longer replays the last frame after reconnect
+8. **[02-02]** poll scheduling uses elapsed wall-clock ticks rounded to `poll_interval`, not successful-poll counters
+9. **[02-02]** solar/offline quiet logging is inferred from profile metadata and PV-style item names, not new config fields
 
 ### Todos
 
@@ -85,6 +91,9 @@ Phase 01 — protocol-core (Plan 02 complete, Plan 03 next)
 |------|------|--------|
 | 2026-03-29 | 01-01 | Completed: solarman_logger/ package scaffold + protocol extraction (2 tasks, 8 files, 5 tests GREEN) |
 | 2026-03-29 | 01-02 | Completed: YAML config loader with startup validation — load_config(), Config, DeviceConfig, InfluxConfig, ConfigError (2 tasks, 4 files, 7 tests GREEN) |
+| 2026-03-29 | 01-03 | Completed: parser integration tests, structured logging, slugify verification, requirements.txt (2 tasks, 5 files, 29 tests GREEN) |
+| 2026-03-30 | 02-01 | Completed: pysolarman reconnect fixes — bounded retry, asyncio.Event, no last-frame replay (4 regression tests GREEN) |
+| 2026-03-30 | 02-02 | Completed: standalone poller — DeviceWorker, DeviceHealth, elapsed-time scheduling, per-device backoff (45 tests GREEN) |
 
 ---
 *State initialized: 2026-03-29*

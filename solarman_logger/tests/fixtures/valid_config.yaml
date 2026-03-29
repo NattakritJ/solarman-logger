@@ -9,6 +9,7 @@ defaults:
 
 devices:
   - name: "Deye Micro"
+    type: "inverter"
     host: "192.168.1.100"
     port: 8899
     serial: 1234567890
@@ -17,6 +18,7 @@ devices:
     slave: 2
 
   - name: "DDZY Meter"
+    type: "meter"
     host: "192.168.1.101"
     serial: 9876543210
     profile: "ddzy422-d2.yaml"

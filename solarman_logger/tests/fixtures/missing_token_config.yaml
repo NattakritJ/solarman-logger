@@ -9,6 +9,7 @@ defaults:
 
 devices:
   - name: "Deye Micro"
+    type: "inverter"
     host: "192.168.1.100"
     serial: 1234567890
     profile: "deye_micro.yaml"

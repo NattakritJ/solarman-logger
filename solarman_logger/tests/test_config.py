@@ -108,3 +108,41 @@ def test_empty_devices_list_raises_config_error():
         assert "devices" in str(exc_info.value).lower()
     finally:
         os.unlink(tmp_path)
+
+
+def test_device_type_field_loaded():
+    """Test 8: load_config with valid_config.yaml returns DeviceConfig where .type == 'inverter' for first device and .type == 'meter' for second."""
+    cfg = load_config(str(FIXTURES_DIR / "valid_config.yaml"))
+
+    assert cfg.devices[0].type == "inverter"
+    assert cfg.devices[1].type == "meter"
+
+
+def test_missing_type_raises_config_error():
+    """Test 9: load_config with config missing devices[0].type raises ConfigError containing 'devices[0].type'."""
+    import tempfile
+    import yaml
+
+    cfg_data = {
+        "influxdb": {"url": "http://localhost:8086", "org": "o", "bucket": "b", "token": "t"},
+        "defaults": {"poll_interval": 60},
+        "devices": [
+            {
+                "name": "TestDevice",
+                # type intentionally missing
+                "host": "192.168.1.1",
+                "serial": 12345,
+                "profile": "test.yaml",
+            }
+        ],
+    }
+    with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
+        yaml.dump(cfg_data, f)
+        tmp_path = f.name
+
+    try:
+        with pytest.raises(ConfigError) as exc_info:
+            load_config(tmp_path)
+        assert "devices[0].type" in str(exc_info.value)
+    finally:
+        os.unlink(tmp_path)

@@ -1,0 +1,24 @@
+influxdb:
+  url: "http://localhost:8086"
+  org: "myorg"
+  bucket: "solar"
+  token: "my-secret-token"
+
+defaults:
+  poll_interval: 60
+
+devices:
+  - name: "Deye Micro"
+    host: "192.168.1.100"
+    port: 8899
+    serial: 1234567890
+    profile: "deye_micro.yaml"
+    poll_interval: 30
+    slave: 2
+
+  - name: "DDZY Meter"
+    host: "192.168.1.101"
+    serial: 9876543210
+    profile: "ddzy422-d2.yaml"
+    # poll_interval not set — uses defaults.poll_interval (60)
+    # slave not set — defaults to 1

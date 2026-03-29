@@ -1,0 +1,14 @@
+influxdb:
+  url: "http://localhost:8086"
+  org: "myorg"
+  bucket: "solar"
+  # token is intentionally absent to test ConfigError
+
+defaults:
+  poll_interval: 60
+
+devices:
+  - name: "Deye Micro"
+    host: "192.168.1.100"
+    serial: 1234567890
+    profile: "deye_micro.yaml"

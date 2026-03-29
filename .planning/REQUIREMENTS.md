@@ -75,35 +75,35 @@
 
 ## Traceability
 
-Updated during roadmap creation.
+Updated: 2026-03-29 (roadmap created)
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CONF-01 | — | Pending |
-| CONF-02 | — | Pending |
-| CONF-03 | — | Pending |
-| CONF-04 | — | Pending |
-| POLL-01 | — | Pending |
-| POLL-02 | — | Pending |
-| POLL-03 | — | Pending |
-| POLL-04 | — | Pending |
-| POLL-05 | — | Pending |
-| POLL-06 | — | Pending |
-| INFL-01 | — | Pending |
-| INFL-02 | — | Pending |
-| INFL-03 | — | Pending |
-| INFL-04 | — | Pending |
-| INFL-05 | — | Pending |
-| LOG-01 | — | Pending |
-| LOG-02 | — | Pending |
-| DEPL-01 | — | Pending |
-| DEPL-02 | — | Pending |
-| DEPL-03 | — | Pending |
+| CONF-01 | Phase 1 | Pending |
+| CONF-02 | Phase 1 | Pending |
+| CONF-03 | Phase 1 | Pending |
+| CONF-04 | Phase 1 | Pending |
+| POLL-01 | Phase 2 | Pending |
+| POLL-02 | Phase 1 | Pending |
+| POLL-03 | Phase 1 | Pending |
+| POLL-04 | Phase 2 | Pending |
+| POLL-05 | Phase 1 | Pending |
+| POLL-06 | Phase 2 | Pending |
+| INFL-01 | Phase 3 | Pending |
+| INFL-02 | Phase 3 | Pending |
+| INFL-03 | Phase 3 | Pending |
+| INFL-04 | Phase 3 | Pending |
+| INFL-05 | Phase 3 | Pending |
+| LOG-01 | Phase 1 | Pending |
+| LOG-02 | Phase 1 | Pending |
+| DEPL-01 | Phase 4 | Pending |
+| DEPL-02 | Phase 4 | Pending |
+| DEPL-03 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 20 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 20 ⚠️
+- Mapped to phases: 20 ✓
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-29*

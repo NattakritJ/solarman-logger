@@ -27,6 +27,7 @@ class InfluxConfig:
 @dataclass
 class DeviceConfig:
     name: str
+    type: str                  # e.g. "inverter", "meter" — required, used as InfluxDB tag
     host: str
     port: int                  # default 8899
     serial: int                # Solarman V5 serial number (logger stick SN)
@@ -119,6 +120,7 @@ def load_config(path: str) -> Config:
 
         # Required per-device fields
         dev_name = _require(dev, "name", f"devices[{i}]")
+        dev_type = _require(dev, "type", f"devices[{i}]")
         dev_host = _require(dev, "host", f"devices[{i}]")
         dev_serial = dev.get("serial")
         if dev_serial is None:
@@ -132,6 +134,7 @@ def load_config(path: str) -> Config:
 
         devices.append(DeviceConfig(
             name=str(dev_name),
+            type=str(dev_type),
             host=str(dev_host),
             port=int(dev_port),
             serial=int(dev_serial),

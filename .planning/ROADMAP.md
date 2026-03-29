@@ -33,7 +33,7 @@
 Plans:
 - [x] 01-01-PLAN.md — Create solarman_logger/ package scaffold; extract pysolarman + umodbus + const/common/parser with HA imports stripped
 - [x] 01-02-PLAN.md — YAML config loader with startup validation; typed Config/DeviceConfig/InfluxConfig dataclasses
-- [ ] 01-03-PLAN.md — ParameterParser integration test, slugify equivalence test, structured logging setup, requirements.txt
+- [x] 01-03-PLAN.md — ParameterParser integration test, slugify equivalence test, structured logging setup, requirements.txt
 
 ### Phase 2: Device Polling Loop
 **Goal**: All configured devices are polled concurrently on schedule; one device failing does not affect others; per-group update intervals from YAML profiles are honoured; pysolarman critical bugs are fixed.

@@ -1,13 +1,12 @@
+import asyncio
+import logging
+import struct
 import time
 import types
-import struct
-import logging
-import asyncio
 
 from functools import wraps
-from random import randrange
 from logging import getLogger
-from multiprocessing import Event
+from random import randrange
 
 from .umodbus.functions import FUNCTION_CODES
 from .umodbus.exceptions import error_code_to_exception_map
@@ -15,7 +14,7 @@ from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
 
-from ..common import retry, throttle, create_task, format
+from ..common import retry, throttle, create_task, format, strepr
 
 _LOGGER = getLogger(__name__)
 
@@ -74,7 +73,7 @@ class Solarman:
         self._writer: asyncio.StreamWriter | None = None
         self._lock = asyncio.Lock()
         self._data_queue: asyncio.Queue[bytes] = asyncio.Queue(maxsize = 1)
-        self._data_event = Event()
+        self._data_event = asyncio.Event()
         self._last_frame: bytes | None = None
 
     @staticmethod
@@ -211,18 +210,22 @@ class Solarman:
 
     @throttle(0.2)
     async def _open_connection(self) -> None:
-        try:
-            self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
-            self._keeper = create_task(self._keeper_loop())
-            if self._data_event.is_set():
-                _LOGGER.debug(f"[{self.host}] Successful reconnection! Data expected. Will retry the last request")
-                await self._write(self._last_frame)
-            else:
-                _LOGGER.debug(f"[{self.host}] Successful connection!")
-        except Exception as e:
-            if self._last_frame is None:
-                raise ConnectionError("Cannot open connection") from e
-            await self._open_connection()
+        max_attempts = 3
+        last_error = None
+
+        for attempt in range(max_attempts):
+            try:
+                self._reader, self._writer = await asyncio.wait_for(asyncio.open_connection(self.host, self.port), self.timeout)
+                self._keeper = create_task(self._keeper_loop())
+                _LOGGER.debug(f"[{self.host}] {'Successful reconnection' if self._last_frame is not None else 'Successful connection'}!")
+                return
+            except Exception as e:
+                last_error = e
+                if self._last_frame is None:
+                    raise ConnectionError("Cannot open connection") from e
+                _LOGGER.debug(f"[{self.host}] Connection attempt {attempt + 1}/{max_attempts} failed: {strepr(e)}")
+
+        raise ConnectionError(f"[{self.host}] Failed to connect after {max_attempts} attempts") from last_error
 
     async def _close(self) -> None:
         if self._writer:

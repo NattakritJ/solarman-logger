@@ -1,0 +1,43 @@
+# solarman-logger configuration
+# Copy this file to config/config.yaml and update values for your setup.
+#
+# Directory layout expected by Docker:
+#   config/
+#     config.yaml                  (this file)
+#     inverter_definitions/        (copy from repo: custom_components/solarman/inverter_definitions/)
+#       deye_micro.yaml
+#       ...
+
+influxdb:
+  url: "http://192.168.2.10:8181"
+  org: "jatupat-home"
+  bucket: "solar"
+  token: "apiv3_AwBnUa4uyFJw_b5QZl6cZG1X7XriXLxaSelwPoTt8loiGzHXo256oB1ZCHRjkMML5Ajnv_cnO56flhBWdpH10w"
+
+defaults:
+  poll_interval: 10 # seconds — global default, can be overridden per device
+
+devices:
+  - name: "Smart Meter"
+    type: "meter"
+    host: "10.20.30.60"
+    port: 8899
+    serial: "2615480154"
+    slave: 1
+    profile: "inverter_definitions/ddzy422-d2.yaml"
+
+  - name: "West Microinverter"
+    type: "inverter"
+    host: "10.20.30.61"
+    port: 8899
+    serial: "2510170302"
+    slave: 1
+    profile: "inverter_definitions/deye_micro.yaml"
+
+  - name: "East Microinverter"
+    type: "inverter"
+    host: "10.20.30.62"
+    port: 8899
+    serial: "251017036F"
+    slave: 1
+    profile: "inverter_definitions/deye_micro.yaml"

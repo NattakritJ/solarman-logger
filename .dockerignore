@@ -6,9 +6,4 @@ __pycache__
 *.pyc
 *.pyo
 solarman_logger/tests/
-custom_components/
-.github/
-hacs.json
-README.md
-LICENSE
 *.md

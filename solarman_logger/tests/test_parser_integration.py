@@ -15,9 +15,9 @@ from solarman_logger.parser import ParameterParser
 from solarman_logger.const import CONF_MOD, CONF_MPPT, CONF_PHASE, CONF_PACK
 
 # Absolute path to inverter definitions directory (trailing slash required)
-# Path: solarman_logger/tests/ -> ../../ -> repo root -> custom_components/...
+# Path: solarman_logger/tests/ -> ../../ -> repo root -> config/inverter_definitions/
 PROFILE_DIR = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "../../custom_components/solarman/inverter_definitions/")
+    os.path.join(os.path.dirname(__file__), "../../config/inverter_definitions/")
 ) + "/"
 
 # Default parameters per D-07

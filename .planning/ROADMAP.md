@@ -28,7 +28,12 @@
   3. Loading a YAML inverter profile and feeding it raw register bytes via `ParameterParser` returns a `dict[str, tuple]` of named, typed, unit-annotated fields — no HA imports required
   4. The standalone `slugify()` replacement produces identical output to `homeassistant.util.slugify` for every register key across the Deye micro and DDZY YAML profiles (verified by comparison test)
   5. All stdout log output includes timestamp, log level, and device name context; unreachable-device errors and invalid-data errors produce distinct log messages
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Create solarman_logger/ package scaffold; extract pysolarman + umodbus + const/common/parser with HA imports stripped
+- [ ] 01-02-PLAN.md — YAML config loader with startup validation; typed Config/DeviceConfig/InfluxConfig dataclasses
+- [ ] 01-03-PLAN.md — ParameterParser integration test, slugify equivalence test, structured logging setup, requirements.txt
 
 ### Phase 2: Device Polling Loop
 **Goal**: All configured devices are polled concurrently on schedule; one device failing does not affect others; per-group update intervals from YAML profiles are honoured; pysolarman critical bugs are fixed.

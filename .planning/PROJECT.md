@@ -21,13 +21,13 @@ Every configured device is polled on schedule and its data lands in InfluxDB —
 - ✓ Configurable poll interval per device (or global default) — Validated in Phase 1: Protocol Core
 - ✓ Reuse ha-solarman's YAML device profile definitions for register mapping — Validated in Phase 1: Protocol Core
 - ✓ Structured stdout logging (timestamps, device name, log level) — Validated in Phase 1: Protocol Core
+- ✓ Concurrent per-device polling loop with error isolation — Validated in Phase 2: Device Polling Loop
+- ✓ Graceful error handling — log and retry on device unreachable or bad data, never crash — Validated in Phase 2: Device Polling Loop
+- ✓ Write measurements to InfluxDB v2 — one measurement per device, tagged with device name + type — Validated in Phase 3: InfluxDB Pipeline
 
 ### Active
 
-- [ ] Write measurements to InfluxDB v2 — one measurement per device, tagged with device name + type
 - [ ] Docker image + docker-compose.yml for deployment
-- [ ] Graceful error handling — log and retry on device unreachable or bad data, never crash
-- [ ] Concurrent per-device polling loop with error isolation
 
 ### Out of Scope
 
@@ -78,11 +78,12 @@ Every configured device is polled on schedule and its data lands in InfluxDB —
 |----------|-----------|---------|
 | Reuse pysolarman + umodbus from repo | Already proven, handles Solarman V5 framing correctly | ✓ Extracted in Phase 1 — zero HA imports |
 | Reuse ParameterParser + YAML profiles | Eliminates register mapping work; profiles already exist for Deye | ✓ Extracted in Phase 1 — 60-item profile loads and parses |
-| Per-device measurements in InfluxDB | Cleanest Grafana dashboard structure; easy to query per device | — Pending |
+| Per-device measurements in InfluxDB | Cleanest Grafana dashboard structure; easy to query per device | ✓ Implemented in Phase 3 — float-typed Points with device_name/device_type tags |
 | YAML config file | Human-readable, easy to add/remove devices without code changes | ✓ Implemented in Phase 1 — fail-fast validation |
 | Docker + docker-compose.yml | Matches user's existing server setup; portable, restartable | — Pending |
-| Log-and-retry on failure | Never crash; one broken device shouldn't stop others | — Pending |
+| Log-and-retry on failure | Never crash; one broken device shouldn't stop others | ✓ Implemented in Phase 2 — per-device backoff + recovery |
 | python-slugify replaces HA slugify | Validated equivalent output across all profile keys | ✓ Confirmed in Phase 1 |
+| Elapsed-time anchored group scheduling | Hourly profile groups should stay hourly even across failures | ✓ Implemented in Phase 2 |
 
 ## Evolution
 
@@ -102,4 +103,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-29 after Phase 1 (Protocol Core) completion*
+*Last updated: 2026-03-30 after Phase 3 (InfluxDB Pipeline) completion*

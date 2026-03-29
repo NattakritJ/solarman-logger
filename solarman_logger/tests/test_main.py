@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import signal
 import sys
 from unittest.mock import MagicMock, patch, call
 
@@ -147,3 +148,142 @@ class TestMain:
         main([])
 
         mock_writer.close.assert_called_once()
+
+
+class TestConfigPathEnv:
+    """Tests for CONFIG_PATH environment variable support."""
+
+    @patch("solarman_logger.main.signal")
+    @patch("solarman_logger.main.asyncio")
+    @patch("solarman_logger.main.run_all")
+    @patch("solarman_logger.main.InfluxDBWriter")
+    @patch("solarman_logger.main.load_config")
+    @patch("solarman_logger.main.setup_logging")
+    def test_config_path_env_overrides_default(
+        self, mock_setup, mock_load, mock_writer_cls, mock_run_all, mock_asyncio, mock_signal
+    ):
+        """When CONFIG_PATH env var is set and no --config flag, load_config gets the env value."""
+        mock_config = MagicMock()
+        mock_config.devices = [MagicMock(name="dev1", type="inverter")]
+        mock_load.return_value = mock_config
+        mock_writer = MagicMock()
+        mock_writer_cls.return_value = mock_writer
+
+        with patch.dict("os.environ", {"CONFIG_PATH": "/data/test.yaml"}):
+            main([])
+
+        mock_load.assert_called_once_with("/data/test.yaml")
+
+    @patch("solarman_logger.main.signal")
+    @patch("solarman_logger.main.asyncio")
+    @patch("solarman_logger.main.run_all")
+    @patch("solarman_logger.main.InfluxDBWriter")
+    @patch("solarman_logger.main.load_config")
+    @patch("solarman_logger.main.setup_logging")
+    def test_cli_config_overrides_env(
+        self, mock_setup, mock_load, mock_writer_cls, mock_run_all, mock_asyncio, mock_signal
+    ):
+        """CLI --config flag takes precedence over CONFIG_PATH env var."""
+        mock_config = MagicMock()
+        mock_config.devices = [MagicMock(name="dev1", type="inverter")]
+        mock_load.return_value = mock_config
+        mock_writer = MagicMock()
+        mock_writer_cls.return_value = mock_writer
+
+        with patch.dict("os.environ", {"CONFIG_PATH": "/data/env.yaml"}):
+            main(["--config", "/etc/explicit.yaml"])
+
+        mock_load.assert_called_once_with("/etc/explicit.yaml")
+
+    @patch("solarman_logger.main.signal")
+    @patch("solarman_logger.main.asyncio")
+    @patch("solarman_logger.main.run_all")
+    @patch("solarman_logger.main.InfluxDBWriter")
+    @patch("solarman_logger.main.load_config")
+    @patch("solarman_logger.main.setup_logging")
+    def test_no_env_no_flag_uses_default(
+        self, mock_setup, mock_load, mock_writer_cls, mock_run_all, mock_asyncio, mock_signal
+    ):
+        """When neither CONFIG_PATH nor --config is given, uses 'config.yaml' default."""
+        mock_config = MagicMock()
+        mock_config.devices = [MagicMock(name="dev1", type="inverter")]
+        mock_load.return_value = mock_config
+        mock_writer = MagicMock()
+        mock_writer_cls.return_value = mock_writer
+
+        with patch.dict("os.environ", {}, clear=False):
+            # Ensure CONFIG_PATH is not set
+            import os
+            os.environ.pop("CONFIG_PATH", None)
+            main([])
+
+        mock_load.assert_called_once_with("config.yaml")
+
+
+class TestSigtermHandler:
+    """Tests for SIGTERM clean shutdown."""
+
+    @patch("solarman_logger.main.signal")
+    @patch("solarman_logger.main.asyncio")
+    @patch("solarman_logger.main.run_all")
+    @patch("solarman_logger.main.InfluxDBWriter")
+    @patch("solarman_logger.main.load_config")
+    @patch("solarman_logger.main.setup_logging")
+    def test_sigterm_handler_registered(
+        self, mock_setup, mock_load, mock_writer_cls, mock_run_all, mock_asyncio, mock_signal
+    ):
+        """main() registers a SIGTERM handler via signal.signal."""
+        mock_config = MagicMock()
+        mock_config.devices = [MagicMock(name="dev1", type="inverter")]
+        mock_load.return_value = mock_config
+        mock_writer = MagicMock()
+        mock_writer_cls.return_value = mock_writer
+
+        main([])
+
+        # Verify signal.signal was called with SIGTERM as first arg
+        mock_signal.signal.assert_called_once()
+        call_args = mock_signal.signal.call_args
+        assert call_args[0][0] == mock_signal.SIGTERM
+
+    @patch("solarman_logger.main.signal")
+    @patch("solarman_logger.main.asyncio")
+    @patch("solarman_logger.main.run_all")
+    @patch("solarman_logger.main.InfluxDBWriter")
+    @patch("solarman_logger.main.load_config")
+    @patch("solarman_logger.main.setup_logging")
+    def test_sigterm_triggers_clean_shutdown(
+        self, mock_setup, mock_load, mock_writer_cls, mock_run_all, mock_asyncio, mock_signal
+    ):
+        """SIGTERM handler raises SystemExit, which triggers writer.close() and 'Shutdown complete' log."""
+        mock_config = MagicMock()
+        mock_config.devices = [MagicMock(name="dev1", type="inverter")]
+        mock_load.return_value = mock_config
+        mock_writer = MagicMock()
+        mock_writer_cls.return_value = mock_writer
+
+        # Capture the SIGTERM handler that gets registered
+        captured_handler = None
+        real_signal = signal.signal
+
+        def capture_signal(signum, handler):
+            nonlocal captured_handler
+            if signum == signal.SIGTERM:
+                captured_handler = handler
+
+        mock_signal.signal.side_effect = capture_signal
+        mock_signal.SIGTERM = signal.SIGTERM
+
+        # Make asyncio.run raise SystemExit (simulating SIGTERM during run)
+        mock_asyncio.run.side_effect = SystemExit(0)
+
+        main([])
+
+        # The handler should have been registered
+        assert captured_handler is not None
+        # When the handler fires, it should raise SystemExit
+        with pytest.raises(SystemExit):
+            captured_handler(signal.SIGTERM, None)
+
+        # writer.close() should have been called in the finally block
+        mock_writer.close.assert_called()

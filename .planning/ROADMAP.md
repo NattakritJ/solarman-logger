@@ -44,7 +44,11 @@ Plans:
   2. Registers in the `Info` group (update_interval 3600s) are only polled once per hour; real-time registers poll at the configured interval — verified by log output showing request batches
   3. A device that is unreachable for N cycles continues logging a warning every cycle and recovers automatically (without container restart) when the device comes back online
   4. No `RecursionError` occurs under sustained network failure (recursive `_open_connection` bug is replaced with task-based retry)
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 02-01-PLAN.md — Fix pysolarman bugs: bounded retry replacing recursion, asyncio.Event, no last-frame replay
+- [ ] 02-02-PLAN.md — Build polling loop: DeviceWorker, DeviceHealth, per-group scheduling, backoff, transition logging
 
 ### Phase 3: InfluxDB Pipeline
 **Goal**: Every successful poll cycle results in a correctly-typed InfluxDB Point written per device, tagged with device name and type; write failures are logged without crashing; InfluxDB connectivity is validated at startup.
@@ -102,8 +106,8 @@ Plans:
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Protocol Core | 2/3 | In Progress|  |
-| 2. Device Polling Loop | 0/? | Not started | — |
+| 1. Protocol Core | 3/3 | Complete |  |
+| 2. Device Polling Loop | 0/2 | Planned | — |
 | 3. InfluxDB Pipeline | 0/? | Not started | — |
 | 4. Docker Packaging | 0/? | Not started | — |
 

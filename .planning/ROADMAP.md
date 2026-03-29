@@ -10,7 +10,7 @@
 ## Phases
 
 - [ ] **Phase 1: Protocol Core** — Extract and adapt pysolarman/ParameterParser, load and validate YAML config, verify slugify replacement
-- [ ] **Phase 2: Device Polling Loop** — Concurrent per-device polling with error isolation, per-group scheduling, and fixed pysolarman bugs
+- [x] **Phase 2: Device Polling Loop** — Concurrent per-device polling with error isolation, per-group scheduling, and fixed pysolarman bugs
 - [ ] **Phase 3: InfluxDB Pipeline** — Write parsed readings to InfluxDB with float enforcement, startup health check, and error-tolerant writes
 - [ ] **Phase 4: Docker Packaging** — Dockerfile, docker-compose.yml, config path env var, and verified clean shutdown
 
@@ -47,8 +47,8 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 02-01-PLAN.md — Fix pysolarman bugs: bounded retry replacing recursion, asyncio.Event, no last-frame replay
-- [ ] 02-02-PLAN.md — Build polling loop: DeviceWorker, DeviceHealth, per-group scheduling, backoff, transition logging
+- [x] 02-01-PLAN.md — Fix pysolarman bugs: bounded retry replacing recursion, asyncio.Event, no last-frame replay
+- [x] 02-02-PLAN.md — Build polling loop: DeviceWorker, DeviceHealth, per-group scheduling, backoff, transition logging
 
 ### Phase 3: InfluxDB Pipeline
 **Goal**: Every successful poll cycle results in a correctly-typed InfluxDB Point written per device, tagged with device name and type; write failures are logged without crashing; InfluxDB connectivity is validated at startup.
@@ -59,7 +59,11 @@ Plans:
   2. All numeric field values in InfluxDB are stored as float (never int) — a field that is zero on the first write does not cause a type conflict on subsequent fractional writes
   3. Starting the service when InfluxDB is unreachable logs a clear error at startup; the service either exits or retries without crashing — no silent failure
   4. A write failure during operation (e.g. InfluxDB restart mid-run) logs a warning; the next poll cycle writes normally — no data from the failed cycle is buffered or retried
-**Plans**: TBD
+**Plans**: 2 plans
+
+Plans:
+- [ ] 03-01-PLAN.md — InfluxDB writer module, DeviceConfig type field, health check, float enforcement, write error handling
+- [ ] 03-02-PLAN.md — main.py entry point, wire writer into poller shutdown, full integration
 
 ### Phase 4: Docker Packaging
 **Goal**: The complete service runs as a Docker container started with `docker compose up`; it reaches LAN inverters, loads config from a bind-mounted file, and exits cleanly on `docker stop`.
@@ -107,7 +111,7 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Protocol Core | 3/3 | Complete |  |
-| 2. Device Polling Loop | 0/2 | Planned | — |
+| 2. Device Polling Loop | 2/2 | Complete | 2026-03-30 |
 | 3. InfluxDB Pipeline | 0/? | Not started | — |
 | 4. Docker Packaging | 0/? | Not started | — |
 

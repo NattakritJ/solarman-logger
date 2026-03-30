@@ -7,5 +7,6 @@ services:
     stop_grace_period: 5s
     environment:
       - CONFIG_PATH=/config/config.yaml
+      - TZ=Asia/Bangkok
     volumes:
       - ./config:/config:ro

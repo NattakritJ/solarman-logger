@@ -12,6 +12,9 @@ COPY solarman_logger/ solarman_logger/
 # Default config path inside container
 ENV CONFIG_PATH=/config/config.yaml
 
+# Default timezone (override via docker-compose environment)
+ENV TZ=Asia/Bangkok
+
 # Stop grace period: Python needs SIGTERM as PID 1
 # exec form ensures python is PID 1
 STOPSIGNAL SIGTERM

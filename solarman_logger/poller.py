@@ -12,6 +12,7 @@ from .const import CONF_MOD, CONF_MPPT, CONF_PACK, CONF_PHASE, REQUEST_CODE, REQ
 from .logging_setup import get_device_logger
 from .parser import ParameterParser
 from .pysolarman import Solarman
+from .pysolarman.umodbus.exceptions import ServerDeviceBusyError
 
 _LOGGER = getLogger(__name__)
 
@@ -139,7 +140,7 @@ class DeviceWorker:
             self.health.report_invalid_data(self.logger, str(e))
         except asyncio.CancelledError:
             raise
-        except (TimeoutError, ConnectionError, OSError) as e:
+        except (TimeoutError, ConnectionError, OSError, ServerDeviceBusyError) as e:
             self._handle_failure(e)
         except Exception as e:
             self.logger.error(f"Unexpected error during poll: {e!r}")

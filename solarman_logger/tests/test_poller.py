@@ -10,6 +10,7 @@ import pytest
 
 from solarman_logger.config import DeviceConfig
 from solarman_logger.poller import DeviceHealth, DeviceWorker, _detect_solar
+from solarman_logger.pysolarman.umodbus.exceptions import ServerDeviceBusyError
 
 
 def _device_config() -> DeviceConfig:
@@ -213,3 +214,19 @@ def test_detect_solar_uses_profile_metadata():
     parser.info = {"filename": "deye_micro.yaml"}
     parser.get_entity_descriptions.return_value = [{"name": "PV1 Voltage"}]
     assert _detect_solar(parser) is True
+
+
+@pytest.mark.asyncio
+async def test_poll_cycle_server_busy_updates_health_and_backoff():
+    """ServerDeviceBusyError is treated as a transient failure, not an unexpected error."""
+    worker = _worker()
+    worker.parser.schedule_requests.return_value = [{"code": 3, "start": 0, "count": 11}]
+    worker.client.execute.side_effect = ServerDeviceBusyError()
+    callback = AsyncMock()
+
+    await worker._poll_cycle(callback)
+
+    callback.assert_not_awaited()
+    assert worker._consecutive_failures == 1
+    assert worker._backoff_interval == 120
+    assert worker.health._online is False

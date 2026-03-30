@@ -9,7 +9,7 @@ from logging import getLogger
 from random import randrange
 
 from .umodbus.functions import FUNCTION_CODES
-from .umodbus.exceptions import error_code_to_exception_map
+from .umodbus.exceptions import error_code_to_exception_map, ServerDeviceBusyError
 from .umodbus.client.serial.redundancy_check import get_crc
 from .umodbus.client.serial import rtu
 from .umodbus.client import tcp
@@ -96,7 +96,14 @@ class Solarman:
         match value:
             case int():
                 self._serial = value
-                self.serial_bytes = struct.pack("<I", value) if 2147483648 <= value <= 4294967295 else PROTOCOL.PLACEHOLDER3
+                # Always start with placeholder bytes so the first V5 frame
+                # goes out as an "anonymous" session.  Auto-discovery
+                # (_parse_adu_from_sol_response) will read the real serial
+                # from the device's response and set serial_bytes via the
+                # bytes path below.  This avoids session conflicts with
+                # the Solarman cloud which already holds a session keyed
+                # on the real serial number.
+                self.serial_bytes = PROTOCOL.PLACEHOLDER3
             case bytes():
                 self._serial = int.from_bytes(value, "little")
                 self.serial_bytes = value
@@ -310,9 +317,31 @@ class Solarman:
             res = res[:5] + b'\x06' + res[6:] + (req[len(res):10] if len(req) > 12 else (b'\x00' * (10 - len(res)))) + b'\x00\x01'
         return tcp.parse_response_adu(res, req)
 
+    BUSY_RETRY_ATTEMPTS = 5
+    BUSY_RETRY_DELAY = 1.5  # seconds between retries on ServerDeviceBusy
+
     @retry()
     async def get_response(self, code: int, address: int, **kwargs):
         return await self._get_response(code, address, **kwargs)
+
+    async def get_response_with_busy_retry(self, code: int, address: int, **kwargs):
+        """Wrap get_response with extra retries for ServerDeviceBusyError.
+
+        Solarman stick loggers only support one concurrent TCP session.
+        When another client (HA integration or cloud) holds the connection,
+        the device replies with Modbus exception 0x06 (Server Device Busy).
+        This method retries with a delay to wait for the competing client
+        to finish its request window.
+        """
+        for attempt in range(self.BUSY_RETRY_ATTEMPTS):
+            try:
+                return await self.get_response(code, address, **kwargs)
+            except ServerDeviceBusyError:
+                if attempt + 1 >= self.BUSY_RETRY_ATTEMPTS:
+                    _LOGGER.debug(f"[{self.host}] Server device busy after {self.BUSY_RETRY_ATTEMPTS} attempts")
+                    raise
+                _LOGGER.debug(f"[{self.host}] Server device busy, retry {attempt + 1}/{self.BUSY_RETRY_ATTEMPTS} in {self.BUSY_RETRY_DELAY}s")
+                await asyncio.sleep(self.BUSY_RETRY_DELAY)
 
     @log_return("DATA")
     async def execute(self, code: int, address: int, **kwargs):
@@ -321,7 +350,7 @@ class Solarman:
 
         async with asyncio.timeout(self.timeout * 6):
             async with self._lock:
-                return await self.get_response(code, address, **kwargs)
+                return await self.get_response_with_busy_retry(code, address, **kwargs)
 
     @log_call("Closing connection")
     async def close(self):

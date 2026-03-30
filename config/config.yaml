@@ -22,7 +22,6 @@ devices:
     type: "meter"
     host: "10.20.30.60"
     port: 8899
-    serial: "2615480154"
     slave: 1
     profile: "inverter_definitions/ddzy422-d2.yaml"
 
@@ -30,7 +29,6 @@ devices:
     type: "inverter"
     host: "10.20.30.61"
     port: 8899
-    serial: "2510170302"
     slave: 1
     profile: "inverter_definitions/deye_micro.yaml"
 
@@ -38,6 +36,5 @@ devices:
     type: "inverter"
     host: "10.20.30.62"
     port: 8899
-    serial: "251017036F"
     slave: 1
     profile: "inverter_definitions/deye_micro.yaml"

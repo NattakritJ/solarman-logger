@@ -33,7 +33,7 @@ class DeviceConfig:
     type: str                  # e.g. "inverter", "meter" — required, used as InfluxDB tag
     host: str
     port: int                  # default 8899
-    serial: int                # Solarman V5 serial number (logger stick SN)
+    serial: int                # Solarman V5 serial (0 = auto-discover from device)
     slave: int                 # Modbus slave ID, default 1
     poll_interval: int         # seconds, resolved from device override or global default
     profile_dir: str           # absolute directory path ending with "/"
@@ -171,9 +171,7 @@ def load_config(path: str) -> Config:
         dev_name = _require(dev, "name", f"devices[{i}]")
         dev_type = _require(dev, "type", f"devices[{i}]")
         dev_host = _require(dev, "host", f"devices[{i}]")
-        dev_serial = dev.get("serial")
-        if dev_serial is None:
-            raise ConfigError(f"Missing required config: devices[{i}].serial")
+        dev_serial_raw = dev.get("serial")  # Optional — 0 triggers auto-discovery
         dev_profile = _require(dev, "profile", f"devices[{i}]")
 
         # Optional with defaults
@@ -186,7 +184,7 @@ def load_config(path: str) -> Config:
             type=str(dev_type),
             host=str(dev_host),
             port=int(dev_port),
-            serial=_parse_serial(dev_serial, f"devices[{i}].serial"),
+            serial=_parse_serial(dev_serial_raw, f"devices[{i}].serial") if dev_serial_raw is not None else 0,
             slave=int(dev_slave),
             poll_interval=int(dev_poll),
             profile_dir=config_dir,

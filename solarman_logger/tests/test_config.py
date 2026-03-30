@@ -239,3 +239,64 @@ def test_hex_serial_in_full_config():
         assert cfg.devices[0].serial == 0x251017036F
     finally:
         os.unlink(tmp_path)
+
+
+# --- Optional serial (auto-discovery) ---
+
+
+def test_missing_serial_defaults_to_zero():
+    """Device without serial field gets serial=0 (auto-discover from device)."""
+    import tempfile
+    import yaml
+
+    cfg_data = {
+        "influxdb": {"url": "http://localhost:8086", "org": "o", "bucket": "b", "token": "t"},
+        "defaults": {"poll_interval": 60},
+        "devices": [
+            {
+                "name": "AutoDiscoverDevice",
+                "type": "inverter",
+                "host": "192.168.1.100",
+                "profile": "test.yaml",
+                # serial intentionally omitted
+            }
+        ],
+    }
+    with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
+        yaml.dump(cfg_data, f)
+        tmp_path = f.name
+
+    try:
+        cfg = load_config(tmp_path)
+        assert cfg.devices[0].serial == 0
+    finally:
+        os.unlink(tmp_path)
+
+
+def test_explicit_serial_still_works():
+    """Device with explicit serial field still parses correctly."""
+    import tempfile
+    import yaml
+
+    cfg_data = {
+        "influxdb": {"url": "http://localhost:8086", "org": "o", "bucket": "b", "token": "t"},
+        "defaults": {"poll_interval": 60},
+        "devices": [
+            {
+                "name": "ExplicitSerialDevice",
+                "type": "inverter",
+                "host": "192.168.1.100",
+                "serial": 2700000000,
+                "profile": "test.yaml",
+            }
+        ],
+    }
+    with tempfile.NamedTemporaryFile(suffix=".yaml", mode="w", delete=False) as f:
+        yaml.dump(cfg_data, f)
+        tmp_path = f.name
+
+    try:
+        cfg = load_config(tmp_path)
+        assert cfg.devices[0].serial == 2700000000
+    finally:
+        os.unlink(tmp_path)

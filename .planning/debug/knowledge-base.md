@@ -12,6 +12,14 @@ Resolved debug sessions. Used by `gsd-debugger` to surface known-pattern hypothe
 - **Files changed:** solarman_logger/config.py, solarman_logger/tests/test_config.py
 ---
 
+## keeper-loop-unhandled-exception — Unhandled ConnectionError task exception during overnight device sleep
+- **Date:** 2026-04-02
+- **Error patterns:** Task exception was never retrieved, ConnectionError, Failed to connect after 3 attempts, _open_connection, _keeper_loop, asyncio, fire-and-forget
+- **Root cause:** `_keeper_loop` exits its while-loop when a connection drops and calls `create_task(_open_connection())` fire-and-forget without a done_callback. When all 3 reconnect attempts fail (device offline overnight), `_open_connection` raises `ConnectionError` but the Task exception is never retrieved, causing asyncio to log the warning at GC time.
+- **Fix:** Added `_on_reconnect_done` done_callback registered via `.add_done_callback()` immediately after `create_task()` in `_keeper_loop`. Callback calls `task.exception()` to mark the exception retrieved; logs `ConnectionError` at DEBUG (expected offline), other exceptions at WARNING.
+- **Files changed:** solarman_logger/pysolarman/__init__.py
+---
+
 ## server-device-busy — ServerDeviceBusyError on every poll with correct serial in config
 - **Date:** 2026-03-30
 - **Error patterns:** ServerDeviceBusyError, Modbus exception code 0x06, Server Device Busy, device offline, serial, cloud session conflict

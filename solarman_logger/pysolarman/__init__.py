@@ -213,7 +213,15 @@ class Solarman:
                 _ = self._data_queue.get_nowait()
             self._data_queue.put_nowait(data)
             self._data_event.clear()
+        def _on_reconnect_done(task: asyncio.Task):
+            if not task.cancelled() and (exc := task.exception()) is not None:
+                if isinstance(exc, ConnectionError):
+                    _LOGGER.debug(f"[{self.host}] Reconnection attempt failed (device may be offline): {strepr(exc)}")
+                else:
+                    _LOGGER.warning(f"[{self.host}] Unexpected error during reconnection: {strepr(exc)}")
+
         self._keeper = create_task(self._open_connection())
+        self._keeper.add_done_callback(_on_reconnect_done)
 
     @throttle(0.2)
     async def _open_connection(self) -> None:

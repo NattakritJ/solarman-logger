@@ -1,6 +1,6 @@
 # Roadmap: solarman-logger
 
-**Generated:** 2026-03-29
+**Generated:** 2005-03-29
 **Granularity:** coarse
 **Total phases:** 4
 **Requirements mapped:** 20/20
@@ -114,9 +114,6 @@ Plans:
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Protocol Core | 3/3 | Complete |  |
-| 2. Device Polling Loop | 2/2 | Complete | 2026-03-30 |
+| 2. Device Polling Loop | 2/2 | Complete | 2005-03-30 |
 | 3. InfluxDB Pipeline | 0/? | Not started | — |
 | 4. Docker Packaging | 0/? | Not started | — |
-
----
-*Roadmap generated: 2026-03-29*

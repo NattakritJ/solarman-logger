@@ -3,7 +3,7 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: completed
-last_updated: "2026-03-29T20:20:11.680Z"
+last_updated: "2026-04-02T12:40:46.528Z"
 progress:
   total_phases: 4
   completed_phases: 4
@@ -86,6 +86,10 @@ All phases complete.
 16. **[04-01]** SIGTERM converted to SystemExit(0) — reuses existing finally-block cleanup
 17. **[04-01]** Config directory bind-mounted at /config — user provides config.yaml and inverter_definitions/
 18. **[04-01]** No inverter_definitions in image — mounted from host for user customization
+
+### Roadmap Evolution
+
+- Phase 5 added: CT meter house load measurement with floor distribution and calc vs actual panel
 
 ### Todos
 

@@ -220,6 +220,7 @@ class Solarman:
                 else:
                     _LOGGER.warning(f"[{self.host}] Unexpected error during reconnection: {strepr(exc)}")
 
+        await self._close()
         self._keeper = create_task(self._open_connection())
         self._keeper.add_done_callback(_on_reconnect_done)
 

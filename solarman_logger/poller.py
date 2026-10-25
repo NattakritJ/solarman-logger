@@ -119,7 +119,8 @@ class DeviceWorker:
         self._polling_in_progress = True
 
         try:
-            runtime = self._get_runtime()
+            # Recovery must read even when backoff misses profile schedule boundaries.
+            runtime = 0 if self._consecutive_failures else self._get_runtime()
             requests = self.parser.schedule_requests(runtime)
 
             if not requests:

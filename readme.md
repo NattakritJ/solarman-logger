@@ -138,7 +138,12 @@ Each poll cycle writes a single point per device:
 - **Measurement**: device `name` from config
 - **Tags**: `device_name`, `device_type`
 - **Fields**: all numeric readings as floats, string readings as strings
-- **Timestamp**: InfluxDB server time (write time)
+- **Timestamp**: UTC collection time on the logger host
+
+Polling sends snapshots to a dedicated database writer thread. Slow writes do not
+block device polling. The buffer holds 128 pending readings; if full, it drops the
+oldest pending reading and logs a warning. Shutdown allows three seconds to drain
+the buffer. Original collection timestamps are retained when writes are delayed.
 
 Example Flux query:
 
@@ -297,7 +302,10 @@ poller.run_all()
     |       data_callback(device_name, parsed_data)
     |             |
     |             v
-    +--------> InfluxDBWriter.write_callback()  -->  InfluxDB v2
+    +--------> bounded write buffer
+                    |
+                    v
+             database writer thread  -->  InfluxDB v2
 ```
 
 ## License

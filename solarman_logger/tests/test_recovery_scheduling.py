@@ -40,7 +40,6 @@ async def test_offline_retries_read_deye_profile_at_every_backoff_phase(offset, 
     # These are the live failure's timing offsets, repeated every five minutes.
     for attempt in range(8):
         runtime = 161190 + offset + 300 * attempt
-        assert worker.parser.schedule_requests(runtime) == []
         worker._get_runtime.return_value = runtime
         await worker._poll_cycle(callback)
         assert worker.client.execute.await_count == attempt + 2
@@ -70,7 +69,7 @@ async def test_offline_retries_read_deye_profile_at_every_backoff_phase(offset, 
     await worker._poll_cycle(callback)
     worker.client.execute.assert_not_awaited()
     callback.assert_not_awaited()
-    worker._get_runtime.return_value = 161190
+    worker._get_runtime.return_value += 10
     await worker._poll_cycle(callback)
     assert worker.client.execute.await_count > 0
     callback.assert_awaited_once()

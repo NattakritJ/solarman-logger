@@ -22,6 +22,7 @@ class ParameterParser:
         self._requests = None
         self._previous_result = {}
         self._result = {}
+        self._last_schedule_runtime: int | None = None
 
         self.info: dict[str, str] = {}
 
@@ -76,7 +77,11 @@ class ParameterParser:
         return self.is_valid(parameters) and self.is_enabled(parameters) and parameters["rule"] > 0
 
     def is_scheduled(self, parameters, runtime):
-        return "realtime" in parameters or (runtime % (parameters[REQUEST_UPDATE_INTERVAL] if REQUEST_UPDATE_INTERVAL in parameters else self._update_interval) == 0)
+        if "realtime" in parameters or self._last_schedule_runtime is None:
+            return True
+        interval = parameters.get(REQUEST_UPDATE_INTERVAL, self._update_interval)
+        # Catch a crossed boundary once, even when a poll woke up late.
+        return runtime // interval != self._last_schedule_runtime // interval
 
     def default_from_unit_of_measurement(self, parameters):
         return None if (uom := parameters["uom"] if "uom" in parameters else (parameters["unit_of_measurement"] if "unit_of_measurement" in parameters else "")) and re.match(r"\S+", uom) else ""
@@ -87,7 +92,7 @@ class ParameterParser:
     def get_entity_descriptions(self, platform: str | None = None):
         return [i for i in self._items if self.is_valid(i) and self.is_enabled(i) and not "attribute" in i and (i.get("platform") == platform or platform is None)]
 
-    def schedule_requests(self, runtime):
+    def schedule_requests(self, runtime, *, force = False):
         self._result = {}
 
         if self._requests:
@@ -96,12 +101,14 @@ class ParameterParser:
         registers = []
 
         for i in self._items:
-            if self.is_requestable(i) and self.is_scheduled(i, runtime):
+            if self.is_requestable(i) and (force or self.is_scheduled(i, runtime)):
                 self.set_state(i["key"], self.default_from_unit_of_measurement(i))
                 if "registers" in i:
                     for r in sorted(i["registers"]):
                         if (register := (get_code(i, "read"), r)) and not register in registers:
                             bisect.insort(registers, register)
+
+        self._last_schedule_runtime = runtime
 
         if len(registers) == 0:
             return []
